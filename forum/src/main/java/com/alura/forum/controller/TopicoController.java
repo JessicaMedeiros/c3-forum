@@ -43,20 +43,13 @@ public class TopicoController {
     }
 
 
-    //@GetMapping("/{id}")
-    //public ResponseEntity  buscarTopico (@PathVariable Long id) {
-      //  var topicoEncontrado = repository.findById(id);
-
-    //    return ResponseEntity.ok(topicoEncontrado);
-
-  //  }
-
     @GetMapping("/{id}")
-    public ResponseEntity detalhar(@PathVariable Long id) {
-        var medico = repository.getReferenceById(id);
-        return ResponseEntity.ok(new DadosDetalhamentoTopico(medico));
-    }
+    public ResponseEntity  buscarTopico (@PathVariable Long id) {
+        var topicoEncontrado = repository.findById(id);
 
+        return ResponseEntity.ok(topicoEncontrado);
+
+    }
 
 
     @PutMapping("/{id}")
