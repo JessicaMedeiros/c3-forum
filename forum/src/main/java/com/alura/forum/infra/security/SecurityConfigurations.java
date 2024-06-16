@@ -31,8 +31,9 @@ public class SecurityConfigurations {
                 .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeRequests(auth -> auth
                         .requestMatchers(HttpMethod.POST, "/login").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/topicos").permitAll().anyRequest().authenticated()
-                       )
+                        .requestMatchers(HttpMethod.GET, "/topicos").permitAll()
+                        .anyRequest().authenticated()
+                )
                 .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
     }

@@ -27,7 +27,6 @@ public class SecurityFilter extends OncePerRequestFilter {
 
 
         var tokenJWT = recuperarToken(request);
-        System.out.println("sENDO CHAMADO" + tokenJWT);
         if (tokenJWT != null) {
             var subject = tokenService.getSubject(tokenJWT);
             var usuario = repository.findByEmail(subject);
