@@ -3,7 +3,7 @@ CREATE TABLE `topico` (
                           `titulo` VARCHAR(255) UNIQUE NOT NULL,
                           `mensagem` VARCHAR(255) UNIQUE NOT NULL,
                           `curso` VARCHAR(255) NOT NULL,
-                          `autor` VARCHAR(255) NOT NULL,
+                          `autor_id` BIGINT NOT NULL,
                           `data_criacao` DATETIME NOT NULL,
                           `status` VARCHAR(255) DEFAULT NULL,
                           PRIMARY KEY (`id`)

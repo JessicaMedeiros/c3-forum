@@ -1,5 +1,6 @@
 package com.alura.forum.infra.security;
 
+import com.alura.forum.model.usuario.Usuario;
 import com.alura.forum.repository.UsuarioRepository;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -36,6 +37,18 @@ public class SecurityFilter extends OncePerRequestFilter {
         }
 
         filterChain.doFilter(request, response);
+    }
+
+
+    public Usuario resgatarUsuario(HttpServletRequest request) {
+        var tokenJWT = recuperarToken(request);
+        if (tokenJWT != null) {
+            var subject = tokenService.getSubject(tokenJWT);
+            var usuario = repository.findByEmail(subject);
+            return (Usuario) usuario;
+        }
+
+        return null;
     }
 
     private String recuperarToken(HttpServletRequest request) {

@@ -1,5 +1,7 @@
 package com.alura.forum.model;
 
+import com.alura.forum.model.usuario.DadosUsuarios;
+import com.alura.forum.model.usuario.Usuario;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -31,20 +33,16 @@ public class Topico {
 
     private String status;
 
-    private String autor;
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Usuario autor;
 
     private String curso;
-
-//
-//    @Embedded
-//    private Resposta resposta;
 
 
     public Topico(TopicoDTO topicoDTO){
         this.titulo = topicoDTO.titulo();
         this.mensagem = topicoDTO.mensagem();
         this.curso = topicoDTO.curso();
-        this.autor = topicoDTO.autor();
         this.dataCriacao = LocalDateTime.now();
     }
 
@@ -56,5 +54,9 @@ public class Topico {
             this.titulo = dados.titulo();
         }
 
+    }
+
+    public void setAutor(Usuario autor) {
+        this.autor = autor;
     }
 }

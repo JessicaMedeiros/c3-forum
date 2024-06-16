@@ -10,17 +10,12 @@ import java.time.LocalDateTime;
 
 public record TopicoDTO(
         Long id,
-
         @NotBlank
         @Column(unique=true)
         String titulo,
-
         @NotBlank
         @Column(unique=true)
         String mensagem,
-
-        @NotBlank
-        String autor,
         @NotBlank
         String curso
 ) {
