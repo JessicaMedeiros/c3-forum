@@ -1,19 +1,19 @@
 package com.alura.forum.controller;
 
-import com.alura.forum.model.DadosAtualizacaoTopico;
-import com.alura.forum.model.DadosListagemTopico;
-import com.alura.forum.model.Topico;
-import com.alura.forum.model.TopicoDTO;
+import com.alura.forum.model.*;
 import com.alura.forum.repository.TopicoRepository;
 import jakarta.validation.Valid;
 import org.aspectj.weaver.ast.Var;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import org.springframework.data.domain.Pageable;
+import org.springframework.web.util.UriBuilder;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.Optional;
 
@@ -25,45 +25,65 @@ public class TopicoController {
     public TopicoRepository repository;
 
     @GetMapping
-
-    public Page<DadosListagemTopico> listarTopicos(@PageableDefault(size = 10, sort = {"dataCriacao"}) Pageable paginacao){
-        return repository.findAll(paginacao).map(DadosListagemTopico::new);
+    public ResponseEntity<Page<DadosListagemTopico> >listarTopicos(@PageableDefault(size = 10, sort = {"dataCriacao"}) Pageable paginacao){
+        var page = repository.findAll(paginacao).map(DadosListagemTopico::new);
+        return ResponseEntity.ok(page);
     }
 
     @PostMapping
     @Transactional
-    public void cadastrar(@RequestBody @Valid TopicoDTO json ){
-        repository.save(new Topico(json));
+    public ResponseEntity cadastrar(@RequestBody @Valid TopicoDTO json, UriComponentsBuilder uriBuilder){
+        var topico = new Topico(json);
+        repository.save(topico);
+
+        var uri = uriBuilder.path("/topicos/{id}").buildAndExpand(topico.getId()).toUri();
+
         System.out.println(json);
+        return ResponseEntity.created(uri).body(new DadosListagemTopico(topico));
     }
 
+
+    //@GetMapping("/{id}")
+    //public ResponseEntity  buscarTopico (@PathVariable Long id) {
+      //  var topicoEncontrado = repository.findById(id);
+
+    //    return ResponseEntity.ok(topicoEncontrado);
+
+  //  }
 
     @GetMapping("/{id}")
-    public Optional<Topico> buscarTopico (@PathVariable Long id){
-        Optional<Topico> topicoEncontrado = repository.findById(id);
-
-        return topicoEncontrado;
+    public ResponseEntity detalhar(@PathVariable Long id) {
+        var medico = repository.getReferenceById(id);
+        return ResponseEntity.ok(new DadosDetalhamentoTopico(medico));
     }
+
 
 
     @PutMapping("/{id}")
     @Transactional
-    public void atualizar(@PathVariable Long id, @RequestBody DadosAtualizacaoTopico dadosAtualizacaoTopico){
+    public ResponseEntity atualizar(@PathVariable Long id, @RequestBody DadosAtualizacaoTopico dadosAtualizacaoTopico){
         var topicoEncontrado = repository.findById(id);
 
         if(topicoEncontrado.isPresent()) {
             Topico topico = topicoEncontrado.get();
             topico.atualizarInformacoes(dadosAtualizacaoTopico);
+            return ResponseEntity.ok(new DadosListagemTopico(topico));
         }
+
+        return ResponseEntity.noContent().build();
     }
 
     @DeleteMapping("/{id}")
     @Transactional
-    public void atualizar(@PathVariable Long id){
+    public ResponseEntity deletar(@PathVariable Long id){
         var topicoEncontrado = repository.findById(id);
 
         if(topicoEncontrado.isPresent()) {
             repository.deleteById(id);
         }
+
+        return ResponseEntity.noContent().build();
     }
+
+
 }
